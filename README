@@ -1,0 +1,9 @@
+In order to use the tool, you will need to add
+your database access credendials to the config
+file.
+
+The tool expects the config file to be in the
+same directory.  It would be prudent to protect
+the config file in the webserver configuration 
+in order to prevent password exposure. 
+
