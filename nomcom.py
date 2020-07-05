@@ -9,6 +9,7 @@ import cgi
 #import cgitb; cgitb.enable()  # for troubleshooting
 import MySQLdb
 import ConfigParser
+import re
 
 
 def startpage():
@@ -75,20 +76,15 @@ def getmeetingnumbers():
     meetinglist = [97, 98, 99, 100, 101]
     return meetinglist
 
-def checkbyconfirmation(confirmno):
+def checkbyconfirmation(confirmno, confirmp):
     confirmno = "%s" % confirmno
     db = confirmno[0:2]
-    ## Ugly hack for IETF 100 onward
-    if db == "10":
-        db = 100
-    if db == "11":
-        db = 101
-    if db == "12":
-        db = 102
-    if db == "13":
-        db = 103
-    if db == "14":
-        db = 104
+    
+    # refactored hack for IETF 100 onward
+
+    match = confirmp.match(db)
+    if match:
+        db = ''.join([db[0],'0',db[-1]])
 
     dbname = "ietf%s" % db
     rsn = confirmno[0:6]
@@ -115,8 +111,9 @@ def checkbyconfirmation(confirmno):
 
 def checknumbers(confirmlist):
     output = []
+    ietfp = re.compile(r"1[0-4]$")
     for number in confirmlist:
-        result = checkbyconfirmation(number)
+        result = checkbyconfirmation(number, ietfp)
         if result == "Invalid confirmation number":
             continue
         if result != []:
